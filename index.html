@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Нейродуша — Антистресс ИИ-помощник</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.2s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --accent: #10b981;
+            --accent-soft: #d1fae5;
+            --accent-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --border-light: #e2e8f0;
+            --input-bg: #ffffff;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 20px 30px -10px rgba(16, 185, 129, 0.15);
+            --bubble-user: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --bubble-ai: #f1f5f9;
+            --bubble-ai-text: #1e293b;
+            --placeholder: #94a3b8;
+        }
+
+        body.dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --accent: #34d399;
+            --accent-soft: #064e3b;
+            --accent-gradient: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --border-light: #334155;
+            --input-bg: #0f172a;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 20px 30px -10px rgba(52, 211, 153, 0.2);
+            --bubble-user: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            --bubble-ai: #334155;
+            --bubble-ai-text: #f1f5f9;
+            --placeholder: #64748b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: white;
+            background: var(--accent-gradient);
+            padding: 0.6rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 0.4rem;
+            display: flex;
+            gap: 0.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+
+        .theme-btn.active {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .mood-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            animation: fadeIn 0.6s ease;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .mood-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .mood-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .mood-emoji {
+            font-size: 2.5rem;
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        .quick-tips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .tip-btn {
+            background: var(--accent-soft);
+            border: 1px solid var(--border-light);
+            color: var(--accent);
+            padding: 0.7rem 1.3rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .tip-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .tip-btn:hover {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .chat-window {
+            background: var(--bg-card);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 400px;
+            max-height: 500px;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.8rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 90%;
+            animation: messagePop 0.3s ease;
+        }
+
+        @keyframes messagePop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .message.user .avatar {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .bubble {
+            background: var(--bubble-ai);
+            color: var(--bubble-ai-text);
+            padding: 0.9rem 1.2rem;
+            border-radius: 20px;
+            border-bottom-left-radius: 4px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            word-break: break-word;
+        }
+
+        .message.user .bubble {
+            background: var(--bubble-user);
+            color: white;
+            border-radius: 20px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.9rem 1.2rem;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); }
+            40% { transform: scale(1); }
+        }
+
+        .chat-input-area {
+            padding: 1.2rem 1.5rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-card);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 60px;
+            padding: 0.4rem 0.4rem 0.4rem 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+
+        #userInput {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 0.8rem 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #sendBtn {
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: var(--shadow);
+        }
+
+        #sendBtn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .practices-section {
+            margin-top: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-title i {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .practice-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .practice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .practice-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .practice-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+        }
+
+        .practice-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .breathing-exercise {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.8rem;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        .breathing-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .breathing-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 4s ease-in-out;
+            animation: breathe 8s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        .breathing-circle.paused {
+            animation-play-state: paused;
+        }
+
+        .breathing-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .breathing-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .breathing-btn {
+            background: var(--accent-soft);
+            border: 1px solid var(--border-light);
+            color: var(--accent);
+            padding: 0.7rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .breathing-btn:hover {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .affirmation-box {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .affirmation-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin: 1rem 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .affirmation-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .affirmation-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .mood-tracker {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .mood-option {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.6;
+            filter: grayscale(0.3);
+        }
+
+        .mood-option:hover {
+            transform: scale(1.2);
+            opacity: 1;
+            filter: grayscale(0);
+        }
+
+        .mood-option.selected {
+            opacity: 1;
+            filter: grayscale(0);
+            transform: scale(1.2);
+        }
+
+        .achievement-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            box-shadow: var(--shadow-hover);
+            animation: slideIn 0.5s ease;
+            z-index: 1000;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .practices-grid { grid-template-columns: 1fr; }
+            .logo h1 { font-size: 1.4rem; }
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-heart"></i>
+                <h1>Нейродуша ✨</h1>
+            </div>
+            <div class="theme-toggle">
+                <button class="theme-btn active" data-theme="light"><i class="fas fa-sun"></i> Свет</button>
+                <button class="theme-btn" data-theme="dark"><i class="fas fa-moon"></i> Тьма</button>
+            </div>
+        </header>
+
+        <div class="mood-card">
+            <div class="mood-header">
+                <span class="mood-emoji" id="greetingEmoji">😊</span>
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Привет! Я Нейродуша — твой личный антистресс-коуч. Как настроение?</p>
+            </div>
+            <div class="mood-tracker">
+                <span class="mood-option" data-mood="great">😄</span>
+                <span class="mood-option" data-mood="good">🙂</span>
+                <span class="mood-option" data-mood="okay">😐</span>
+                <span class="mood-option" data-mood="bad">😟</span>
+                <span class="mood-option" data-mood="terrible">😫</span>
+            </div>
+            <div class="quick-tips">
+                <button class="tip-btn" data-prompt="Как успокоиться за 5 минут перед экзаменом?">🧘 Быстрое успокоение</button>
+                <button class="tip-btn" data-prompt="Я боюсь всё забыть, что делать?">😰 Страх забыть</button>
+                <button class="tip-btn" data-prompt="Дай технику дыхания против паники">🌬️ Дыхание</button>
+                <button class="tip-btn" data-prompt="Как перестать сравнивать себя с другими?">🤝 Сравнение</button>
+            </div>
+        </div>
+
+        <div class="chat-window">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="avatar"><i class="fas fa-heart"></i></div>
+                    <div class="bubble">Привет! Я Нейродуша — твой помощник для спокойствия перед экзаменами. Напиши, что тебя беспокоит, или попробуй практики ниже 👇</div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="Опиши свои переживания..." autocomplete="off" />
+                    <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="practices-section">
+            <div class="section-title">
+                <i class="fas fa-hands-helping"></i>
+                <span>Быстрые практики для души</span>
+            </div>
+            
+            <div class="practices-grid">
+                <div class="practice-card" id="breathingCard">
+                    <div class="practice-icon">🌊</div>
+                    <h3>Дыхание 4-7-8</h3>
+                    <p>Вдох 4с, задержка 7с, выдох 8с — мгновенное успокоение</p>
+                </div>
+                <div class="practice-card" id="affirmationCard">
+                    <div class="practice-icon">💪</div>
+                    <h3>Аффирмация дня</h3>
+                    <p>Мощная установка для уверенности в себе</p>
+                </div>
+                <div class="practice-card" id="meditationCard">
+                    <div class="practice-icon">🧘</div>
+                    <h3>Мини-медитация</h3>
+                    <p>2 минуты тишины и осознанности</p>
+                </div>
+                <div class="practice-card" id="soundCard">
+                    <div class="practice-icon">🎵</div>
+                    <h3>Звуки природы</h3>
+                    <p>Шум дождя для расслабления</p>
+                </div>
+            </div>
+
+            <div class="breathing-exercise" id="breathingGuide" style="display: none;">
+                <div class="breathing-header">
+                    <i class="fas fa-lungs" style="color: var(--accent); font-size: 1.8rem;"></i>
+                    <h3>Дыхательное упражнение</h3>
+                </div>
+                <div class="breathing-circle" id="breathingCircle">
+                    <span class="breathing-text" id="breathingPhase">Вдох</span>
+                </div>
+                <div class="breathing-controls">
+                    <button class="breathing-btn" id="pauseBreathingBtn">⏸️ Пауза</button>
+                    <button class="breathing-btn" id="resetBreathingBtn">🔄 Сброс</button>
+                    <button class="breathing-btn" id="closeBreathingBtn">✖️ Закрыть</button>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">Следуй за кругом: вдыхай, когда он растёт</p>
+            </div>
+
+            <div class="affirmation-box">
+                <i class="fas fa-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                <div class="affirmation-text" id="affirmationText">Я спокоен и уверен в своих знаниях</div>
+                <button class="affirmation-btn" id="newAffirmationBtn">✨ Новая аффирмация</button>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <i class="fas fa-shield-alt"></i> ИИ-ассистент. Не заменяет профессиональную психологическую помощь.
+        </div>
+    </div>
+
+    <script>
+        (function(){
+            "use strict";
+
+            // ---------- НАСТРОЙКИ API ----------
+            const DEEPSEEK_API_KEY = 'sk-34ec71c0f03c4beaa0a5d0a006508d68'; 
+            const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+            
+            const SYSTEM_PROMPT = `Ты — заботливый и эмпатичный ИИ-помощник Нейродуша, созданный для поддержки школьников и студентов перед экзаменами. 
+Твоя задача: снижать тревожность, давать практические советы по управлению стрессом, поддерживать. 
+Отвечай кратко, тепло, с эмодзи. Максимум 3-4 предложения. Используй дружеский тон, обращайся на "ты".`;
+
+            // DOM элементы
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            const tipButtons = document.querySelectorAll('.tip-btn');
+            const body = document.body;
+            const moodOptions = document.querySelectorAll('.mood-option');
+            const greetingEmoji = document.getElementById('greetingEmoji');
+
+            let isWaitingForResponse = false;
+            let breathingInterval;
+            let isBreathingPaused = false;
+            let meditationTimer;
+            let audioContext = null;
+
+            // ---------- УПРАВЛЕНИЕ ТЕМОЙ ----------
+            function setTheme(theme) {
+                body.classList.toggle('dark', theme === 'dark');
+                themeButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.theme === theme);
+                });
+                localStorage.setItem('neurodusha-theme', theme);
+            }
+
+            setTheme(localStorage.getItem('neurodusha-theme') || 'light');
+            themeButtons.forEach(btn => {
+                btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+            });
+
+            // ---------- ТРЕКЕР НАСТРОЕНИЯ ----------
+            moodOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    moodOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const mood = this.dataset.mood;
+                    const emojis = { great: '😄', good: '🙂', okay: '😐', bad: '😟', terrible: '😫' };
+                    greetingEmoji.textContent = emojis[mood];
+                    
+                    const responses = {
+                        great: "Супер! Так держать! Расскажи, что помогает тебе быть в ресурсе?",
+                        good: "Хорошее настроение — отличная база. Может, поделюсь техникой для концентрации?",
+                        okay: "Нормально — это уже неплохо. Давай попробуем поднять настроение?",
+                        bad: "Понимаю, экзамены — это стресс. Давай вместе найдём способ успокоиться.",
+                        terrible: "Обнимаю тебя мысленно 🤗 Давай попробуем простое упражнение, чтобы стало легче."
+                    };
+                    
+                    if (!isWaitingForResponse) {
+                        setTimeout(() => {
+                            addMessage(responses[mood], 'ai');
+                        }, 500);
+                    }
+                    
+                    showAchievement('🎯 Настроение записано!');
+                });
+            });
+
+            // ---------- ЧАТ ФУНКЦИИ ----------
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sender);
+                
+                const avatar = document.createElement('div');
+                avatar.classList.add('avatar');
+                avatar.innerHTML = sender === 'user' ? '<i class="fas fa-user-graduate"></i>' : '<i class="fas fa-heart"></i>';
+                
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.textContent = text;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function addTypingIndicator() {
+                const indicatorDiv = document.createElement('div');
+                indicatorDiv.classList.add('message', 'ai');
+                indicatorDiv.id = 'typingIndicator';
+                indicatorDiv.innerHTML = `
+                    <div class="avatar"><i class="fas fa-heart"></i></div>
+                    <div class="bubble typing-indicator"><span></span><span></span><span></span></div>
+                `;
+                chatMessages.appendChild(indicatorDiv);
+                scrollToBottom();
+            }
+
+            function removeTypingIndicator() {
+                document.getElementById('typingIndicator')?.remove();
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function setInputEnabled(enabled) {
+                userInput.disabled = !enabled;
+                sendBtn.disabled = !enabled;
+                isWaitingForResponse = !enabled;
+            }
+
+            function showAchievement(text) {
+                const badge = document.createElement('div');
+                badge.classList.add('achievement-badge');
+                badge.innerHTML = `<i class="fas fa-trophy"></i> ${text}`;
+                document.body.appendChild(badge);
+                setTimeout(() => badge.remove(), 3000);
+            }
+
+            async function fetchAIResponse(userMessage) {
+                if (!DEEPSEEK_API_KEY || DEEPSEEK_API_KEY === 'ВАШ_API_КЛЮЧ') {
+                    return "⚠️ Вставь свой API ключ DeepSeek в переменную DEEPSEEK_API_KEY в коде. После этого ИИ заработает!";
+                }
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+                        },
+                        body: JSON.stringify({
+                            model: 'deepseek-chat',
+                            messages: [
+                                { role: 'system', content: SYSTEM_PROMPT },
+                                { role: 'user', content: userMessage }
+                            ],
+                            temperature: 0.8,
+                            max_tokens: 350
+                        })
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) return "🔐 Ошибка: неверный API ключ.";
+                        if (response.status === 402) return "💰 Недостаточно средств. Пополните баланс";
+                        return `😵 Ошибка соединения (${response.status}).`;
+                    }
+
+                    const data = await response.json();
+                    return data.choices[0].message.content.trim();
+                } catch (error) {
+                    return "😓 Не удалось связаться с ИИ.";
+                }
+            }
+
+            async function handleSendMessage(messageText) {
+                if (!messageText.trim() || isWaitingForResponse) return;
+                
+                const text = messageText.trim();
+                addMessage(text, 'user');
+                userInput.value = '';
+                
+                setInputEnabled(false);
+                addTypingIndicator();
+                
+                const aiReply = await fetchAIResponse(text);
+                
+                removeTypingIndicator();
+                addMessage(aiReply, 'ai');
+                setInputEnabled(true);
+                userInput.focus();
+            }
+
+            // ---------- ПРАКТИКИ ----------
+            
+            // Дыхательное упражнение
+            function startBreathingGuide() {
+                const guide = document.getElementById('breathingGuide');
+                guide.style.display = 'block';
+                const circle = document.getElementById('breathingCircle');
+                const phase = document.getElementById('breathingPhase');
+                
+                circle.classList.remove('paused');
+                isBreathingPaused = false;
+                document.getElementById('pauseBreathingBtn').innerHTML = '⏸️ Пауза';
+                
+                let step = 0;
+                const phases = ['Вдох', 'Задержка', 'Выдох'];
+                
+                if (breathingInterval) clearInterval(breathingInterval);
+                
+                breathingInterval = setInterval(() => {
+                    if (!isBreathingPaused) {
+                        phase.textContent = phases[step];
+                        step = (step + 1) % 3;
+                    }
+                }, 4000);
+                
+                showAchievement('🌬️ Дыхательная практика запущена');
+            }
+            
+            function toggleBreathing() {
+                const circle = document.getElementById('breathingCircle');
+                const btn = document.getElementById('pauseBreathingBtn');
+                isBreathingPaused = !isBreathingPaused;
+                circle.classList.toggle('paused', isBreathingPaused);
+                btn.innerHTML = isBreathingPaused ? '▶️ Продолжить' : '⏸️ Пауза';
+            }
+            
+            function resetBreathing() {
+                const circle = document.getElementById('breathingCircle');
+                const phase = document.getElementById('breathingPhase');
+                circle.classList.remove('paused');
+                isBreathingPaused = false;
+                phase.textContent = 'Вдох';
+                document.getElementById('pauseBreathingBtn').innerHTML = '⏸️ Пауза';
+            }
+            
+            function closeBreathing() {
+                document.getElementById('breathingGuide').style.display = 'none';
+                if (breathingInterval) clearInterval(breathingInterval);
+            }
+            
+            // Аффирмации
+            const affirmations = [
+                "Я спокоен и уверен в своих знаниях",
+                "Каждый экзамен — это шаг к моей цели",
+                "Я дышу глубоко и сохраняю ясность ума",
+                "Моё спокойствие — моя суперсила",
+                "Я готов ко всему, что встретится на пути",
+                "Мой мозг работает чётко и эффективно",
+                "Я доверяю себе и своей подготовке"
+            ];
+            
+            function newAffirmation() {
+                const text = document.getElementById('affirmationText');
+                const random = affirmations[Math.floor(Math.random() * affirmations.length)];
+                text.textContent = random;
+                showAchievement('💫 Новая аффирмация');
+            }
+            
+            function showAffirmation() {
+                newAffirmation();
+                document.querySelector('.affirmation-box').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Медитация
+            function startMeditationTimer() {
+                const existingTimer = document.querySelector('.timer-display');
+                if (existingTimer) existingTimer.remove();
+                
+                const timerDiv = document.createElement('div');
+                timerDiv.classList.add('timer-display');
+                timerDiv.id = 'meditationTimer';
+                timerDiv.textContent = '02:00';
+                
+                const meditationCard = document.getElementById('meditationCard');
+                meditationCard.appendChild(timerDiv);
+                
+                let timeLeft = 120;
+                
+                if (meditationTimer) clearInterval(meditationTimer);
+                
+                meditationTimer = setInterval(() => {
+                    timeLeft--;
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerDiv.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(meditationTimer);
+                        timerDiv.textContent = 'Готово! 🎉';
+                        showAchievement('🧘 Медитация завершена!');
+                        setTimeout(() => timerDiv.remove(), 2000);
+                        
+                        // Конфетти
+                        for (let i = 0; i < 30; i++) {
+                            createConfetti();
+                        }
+                    }
+                }, 1000);
+                
+                showAchievement('🧘 2 минуты осознанности');
+            }
+            
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 3000);
+            }
+            
+            // Звуки природы
+            function playCalmSound() {
+                if (!audioContext) {
+                    try {
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    } catch (e) {
+                        return;
+                    }
+                }
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                // Создаём простой шум дождя
+                const bufferSize = 4096;
+                const noiseNode = audioContext.createScriptProcessor(bufferSize, 1, 1);
+                const gainNode = audioContext.createGain();
+                
+                gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                
+                noiseNode.onaudioprocess = function(e) {
+                    const output = e.outputBuffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                };
+                
+                noiseNode.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                showAchievement('🌧️ Шум дождя включен');
+                
+                setTimeout(() => {
+                    gainNode.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 2);
+                    setTimeout(() => noiseNode.disconnect(), 2000);
+                }, 5000);
+            }
+            
+            // ---------- ПРИВЯЗКА СОБЫТИЙ ----------
+            sendBtn.addEventListener('click', () => handleSendMessage(userInput.value));
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSendMessage(userInput.value);
+            });
+
+            tipButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const prompt = btn.dataset.prompt;
+                    if (prompt) {
+                        userInput.value = prompt;
+                        handleSendMessage(prompt);
+                    }
+                });
+            });
+
+            // Привязка практик
+            document.getElementById('breathingCard').addEventListener('click', startBreathingGuide);
+            document.getElementById('affirmationCard').addEventListener('click', showAffirmation);
+            document.getElementById('meditationCard').addEventListener('click', startMeditationTimer);
+            document.getElementById('soundCard').addEventListener('click', playCalmSound);
+            
+            document.getElementById('pauseBreathingBtn').addEventListener('click', toggleBreathing);
+            document.getElementById('resetBreathingBtn').addEventListener('click', resetBreathing);
+            document.getElementById('closeBreathingBtn').addEventListener('click', closeBreathing);
+            document.getElementById('newAffirmationBtn').addEventListener('click', newAffirmation);
+
+            // Фокус на инпут
+            userInput.focus();
+
+            // Добавляем стили для конфетти
+            const style = document.createElement('style');
+            style.textContent = `
+                .confetti {
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    position: absolute;
+                    animation: confettiFall 3s linear forwards;
+                    pointer-events: none;
+                    z-index: 9999;
+                    top: -20px;
+                }
+                @keyframes confettiFall {
+                    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        })();
+    </script>
+</body>
+</html>
